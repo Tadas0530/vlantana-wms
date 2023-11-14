@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('api')->prefix('v2')->group(function () {
+Route::middleware('api')->prefix('v1')->group(function () {
 
     // auth
     Route::post('/register', [AuthController::class, 'register'])->name("register");
