@@ -22,86 +22,115 @@ namespace vlantana_wms_backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.UserCredentials", b =>
+            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.User", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<int?>("CompanyId")
+                        .IsRequired()
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhotoPath")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserCredentialsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("User");
+                });
+
+            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.UserCredentials", b =>
+                {
+                    b.Property<int>("UserCredentialsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserCredentialsId"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ID");
+                    b.HasKey("UserCredentialsId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Credentials");
                 });
 
-            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.UserModel", b =>
+            modelBuilder.Entity("vlantana_wms_backend.Models.Business.Company", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CompanyId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompanyId"));
 
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("ClientId1")
-                        .HasColumnType("int");
+                    b.HasKey("CompanyId");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId1");
-
-                    b.ToTable("UserModels");
-                });
-
-            modelBuilder.Entity("vlantana_wms_backend.Models.Business.Client", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("OrganizationName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ClientModels");
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -109,22 +138,22 @@ namespace vlantana_wms_backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrderId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("CompanyId");
 
-                    b.ToTable("OrderModels");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Pallete", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PalleteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PalleteId"));
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DateArrived")
@@ -150,24 +179,28 @@ namespace vlantana_wms_backend.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ClientId");
+                    b.HasKey("PalleteId");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("PalleteModels");
+                    b.ToTable("Pallete");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -192,55 +225,70 @@ namespace vlantana_wms_backend.Migrations
                     b.Property<DateTime>("ProductionDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ClientId");
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("PalleteId");
 
-                    b.ToTable("ProductModels");
+                    b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.UserModel", b =>
+            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.User", b =>
                 {
-                    b.HasOne("vlantana_wms_backend.Models.Business.Client", "Client")
+                    b.HasOne("vlantana_wms_backend.Models.Business.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("ClientId1");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Client");
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.UserCredentials", b =>
+                {
+                    b.HasOne("vlantana_wms_backend.Models.Auth.User", "User")
+                        .WithOne("UserCredentials")
+                        .HasForeignKey("vlantana_wms_backend.Models.Auth.UserCredentials", "UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Order", b =>
                 {
-                    b.HasOne("vlantana_wms_backend.Models.Business.Client", "Client")
+                    b.HasOne("vlantana_wms_backend.Models.Business.Company", "Company")
                         .WithMany("Orders")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("CompanyId");
 
-                    b.Navigation("Client");
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Pallete", b =>
                 {
-                    b.HasOne("vlantana_wms_backend.Models.Business.Client", "Client")
+                    b.HasOne("vlantana_wms_backend.Models.Business.Company", "Company")
                         .WithMany("Palletes")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("vlantana_wms_backend.Models.Business.Order", "Order")
                         .WithMany("Palletes")
                         .HasForeignKey("OrderId");
 
-                    b.Navigation("Client");
+                    b.Navigation("Company");
 
                     b.Navigation("Order");
                 });
 
             modelBuilder.Entity("vlantana_wms_backend.Models.Business.Product", b =>
                 {
-                    b.HasOne("vlantana_wms_backend.Models.Business.Client", "Client")
+                    b.HasOne("vlantana_wms_backend.Models.Business.Company", "Company")
                         .WithMany("Products")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("vlantana_wms_backend.Models.Business.Order", "Order")
                         .WithMany("Products")
@@ -250,14 +298,19 @@ namespace vlantana_wms_backend.Migrations
                         .WithMany("Products")
                         .HasForeignKey("PalleteId");
 
-                    b.Navigation("Client");
+                    b.Navigation("Company");
 
                     b.Navigation("Order");
 
                     b.Navigation("Pallete");
                 });
 
-            modelBuilder.Entity("vlantana_wms_backend.Models.Business.Client", b =>
+            modelBuilder.Entity("vlantana_wms_backend.Models.Auth.User", b =>
+                {
+                    b.Navigation("UserCredentials");
+                });
+
+            modelBuilder.Entity("vlantana_wms_backend.Models.Business.Company", b =>
                 {
                     b.Navigation("Orders");
 
