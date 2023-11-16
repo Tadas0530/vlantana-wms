@@ -19,6 +19,10 @@ const routes = [
   {
     path: '/authentication',
     component: () => import('@/pages/AuthenticationPage.vue'),
+  },
+  {
+    path: '/dashboard',
+    component: () => import('@/pages/MainPage.vue'),
   }
 ]
 
@@ -26,5 +30,12 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
+
+router.beforeEach((to, from, next) => {
+  if (from.fullPath) {
+    localStorage.setItem('lastRoute', from.fullPath);
+  }
+  next();
+});
 
 export default router

@@ -38,8 +38,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     Route::resource('/pallets', PalletController::class);
 
-    Route::middleware('jwt.auth')->group(function () {
+    Route::middleware(['jwt.from.cookie', 'jwt.auth'])->group(function () {
+        Route::get('/auth/check', [AuthController::class, 'checkAuth']);
 
+        Route::get('/test-jwt', function() {
+           return "You have permission";
+        });
     });
 
     Route::get('/echo', function (Request $request) {

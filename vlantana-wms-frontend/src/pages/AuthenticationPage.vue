@@ -1,55 +1,102 @@
 
 <template>
-  <form @submit.prevent="submit">
-    <v-text-field
-      v-model="name.value.value"
-      :counter="10"
-      :error-messages="name.errorMessage.value"
-      label="Name"
-    ></v-text-field>
+    <form @submit.prevent="handleCredentials">
+        <v-text-field v-if="currentFormType.value === 0" v-model="credentials.name" label="Pilnas vardas"></v-text-field>
 
-    <v-text-field
-      v-model="phone.value.value"
-      :counter="7"
-      :error-messages="phone.errorMessage.value"
-      label="Phone Number"
-    ></v-text-field>
+        <v-text-field v-model="credentials.email" label="El. paštas"></v-text-field>
 
-    <v-text-field
-      v-model="email.value.value"
-      :error-messages="email.errorMessage.value"
-      label="E-mail"
-    ></v-text-field>
+        <v-text-field v-model="credentials.password" label="Slaptažodis"></v-text-field>
 
-    <v-select
-      v-model="select.value.value"
-      :items="items"
-      :error-messages="select.errorMessage.value"
-      label="Select"
-    ></v-select>
+        <v-text-field v-if="currentFormType.value === 0" v-model="credentials.passwordRepeat"
+            label="Slaptažodžio pakartojimas"></v-text-field>
 
-    <v-checkbox
-      v-model="checkbox.value.value"
-      :error-messages="checkbox.errorMessage.value"
-      value="1"
-      label="Option"
-      type="checkbox"
-    ></v-checkbox>
+        <v-select v-if="currentFormType.value === 0" v-model="credentials.company_id" label="Įmonė" :items="companies"
+            item-title="title" item-value="id"></v-select>
 
-    <v-btn
-      class="me-4"
-      type="submit"
-    >
-      submit
-    </v-btn>
+        <v-select v-if="currentFormType.value === 0" v-model="credentials.role" label="Pareigos" :items="roles"
+            item-title="title" item-value="id">
+        </v-select>
 
-    <v-btn @click="handleReset">
-      clear
-    </v-btn>
-  </form>
+        <v-btn class="me-4" type="submit">
+            {{ currentFormType.text }}
+        </v-btn>
+
+        <v-btn @click="handleReset">
+            Ištrinti
+        </v-btn>
+
+        <v-btn class="ms-4" type="submit" @click="changeAuthAction">
+            {{ currentFormType.value === 0 ? formTypes[1].text : formTypes[0].text }}
+        </v-btn>
+    </form>
 </template>
  
- <script>
- export default {
- }
- </script>
+<script>
+import urlProvider from "@/utils/url-provider.js"
+
+export default {
+    data() {
+        return {
+            currentFormType: {
+                value: 0,
+                text: "Registruotis"
+            },
+            formTypes: [
+                {
+                    value: 0,
+                    text: "Registruotis"
+                }, {
+                    value: 1,
+                    text: "Prisijungti"
+                }
+            ],
+            credentials: {
+                name: "",
+                email: "",
+                password: "",
+                company_id: "",
+                role: "",
+            },
+            passwordRepeat: "",
+            companies: [
+                { id: 0, title: 'Vlantana' },
+                { id: 1, title: 'Vilniaus paukštynas' },
+                { id: 2, title: 'Retal' },
+                { id: 3, title: 'Baltoji varnele' }
+            ],
+            roles: [
+                { id: 0, title: 'Operatorius' },
+                { id: 1, title: 'Klientas' },
+                { id: 2, title: 'Vadovas' },
+                { id: 3, title: 'Sandėlio darbuotojas' }
+            ]
+        }
+    },
+    methods: {
+        handleReset() {
+            this.credentials = {
+                name: "",
+                email: "",
+                password: "",
+                company: "",
+                role: "",
+            },
+                this.passwordRepeat = ""
+        },
+        handleCredentials() {
+            if (this.currentFormType.value === 1) {
+                this.$axios.post(`${urlProvider.getServerEndpoint()}/login`, this.credentials, { withCredentials: true }).then(response => {
+                    response.status === 'success' ? localStorage.setItem('user', JSON.stringify(response.user)) : console.log('login failed')
+                })
+            } else {
+                this.$axios.post(`${urlProvider.getServerEndpoint()}/register`, this.credentials, { withCredentials: true }).then(response => {
+                    response.status === 'success' ? localStorage.setItem('user', JSON.stringify(response.user)) : console.log('register failed')
+                })
+            }
+        },
+        changeAuthAction() {
+            this.currentFormType = this.currentFormType.value === 0 ? this.formTypes[1] : this.formTypes[0]
+        }
+    }
+}
+</script>

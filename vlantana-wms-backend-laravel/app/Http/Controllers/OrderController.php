@@ -49,7 +49,8 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-           'description' => $request->input('description')
+            'description' => $request->input('description'),
+            'status' => $request->input('status')
         ]);
 
         $company->orders()->save($order);
@@ -88,7 +89,8 @@ class OrderController extends Controller
         }
 
         $order->create([
-            'description' => $request->input('description')
+            'description' => $request->input('description'),
+            'status' => $request->input('status')
         ]);
 
         $company->orders()->save($order);
