@@ -16,6 +16,10 @@ const routes = [
     //   },
     // ],
   },
+  {
+    path: '/authentication',
+    component: () => import('@/pages/AuthenticationPage.vue'),
+  }
 ]
 
 const router = createRouter({

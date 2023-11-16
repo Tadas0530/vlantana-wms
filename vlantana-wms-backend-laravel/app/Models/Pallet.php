@@ -14,6 +14,7 @@ class Pallet extends Model
     protected $fillable = [
         'company_id',
         'order_id',
+        'barcode',
         'quantity',
         'is_defective',
         'location',

@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PalletController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +28,18 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     //
 
-    Route::middleware('jwt.auth')->get('/user', function (Request $request) {
-        return $request->user();
+    Route::resource('/products', ProductController::class);
+
+    Route::resource('/companies', CompanyController::class);
+
+    Route::resource('/orders', OrderController::class);
+
+    Route::resource('/drivers', DriverController::class);
+
+    Route::resource('/pallets', PalletController::class);
+
+    Route::middleware('jwt.auth')->group(function () {
+
     });
 
     Route::get('/echo', function (Request $request) {

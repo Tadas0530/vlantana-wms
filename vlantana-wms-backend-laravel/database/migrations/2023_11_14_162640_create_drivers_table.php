@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->integer("user_id");
+            $table->integer("user_id")->nullable();
             $table->dateTime("license_from");
             $table->string("certificate_number");
             $table->timestamps();
