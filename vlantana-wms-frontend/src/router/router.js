@@ -1,7 +1,5 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios';
-import urlProvider from '@/utils/url-provider';
 
 const routes = [
   {
@@ -35,6 +33,11 @@ const routes = [
         path: 'inventory',
         name: 'Inventory',
         component: () => import('@/pages/screens/InventoryScreen.vue'),
+      },
+      {
+        path: 'scan',
+        name: 'Scan',
+        component: () => import('@/pages/screens/ScanScreen.vue'),
       },
     ],
   }

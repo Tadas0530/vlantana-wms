@@ -27,6 +27,14 @@ class ProductController extends Controller
         return new JsonResponse($products);
     }
 
+    public function findByBarcode(Request $request) {
+        $company = auth()->user()->company;
+        $product = Product::where('barcode', $request->input('barcode'))
+            ->where('company_id', $company->id)
+            ->first();
+        return response()->json($product);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
