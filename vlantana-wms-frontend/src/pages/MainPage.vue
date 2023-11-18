@@ -1,18 +1,35 @@
 <template>
-    <div class="container-fluid p-0">
+    <div class="container-fluid p-0" style="width: max-content;">
+        <Teleport to="body">
+            <display-one ref="displayOneDialog"></display-one>
+        </Teleport>
         <base-sidebar></base-sidebar>
-        <router-view class="take-up-space"></router-view>
+        <div class="take-up-space">
+            <router-view @displayItem="displayItem"></router-view>
+        </div>
     </div>
 </template>
   
 <script>
 import BaseSidebar from '@/layouts/default/BaseSidebar.vue';
 import MainScreen from '@/pages/screens/MainScreen.vue';
+import DisplayOne from '@/components/DisplayOne.vue';
 
 export default {
+    data() {
+        return {
+            itemToDisplay: null,
+        }
+    },
     components: {
         BaseSidebar,
-        MainScreen
+        MainScreen,
+        DisplayOne
+    },
+    methods: {
+        displayItem(item) {
+            this.$refs.displayOneDialog.displayItem(item);
+        }
     }
 }
 </script>

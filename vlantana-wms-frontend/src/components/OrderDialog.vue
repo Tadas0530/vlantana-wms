@@ -32,7 +32,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="red-darken-1" variant="text" @click="dialog = false">
+                    <v-btn @click="onClose" color="red-darken-1" variant="text">
                         Uždaryti
                     </v-btn>
                     <v-btn color="green-darken-1" variant="text" @click="handleOrderCreation">
@@ -49,7 +49,7 @@ import urlProvider from '@/utils/url-provider';
 import apiClient from '@/utils/api-client';
 
 export default {
-    emits: ['toggleDialog'],
+    emits: ['onModalClose'],
     data() {
         return {
             dialog: false,
@@ -57,7 +57,8 @@ export default {
             formData: {
                 description: '',
                 status: ''
-            }
+            },
+            requestWasMade: false
         }
     },
     methods: {
@@ -69,10 +70,19 @@ export default {
             apiClient.post(`${urlProvider.getServerEndpoint()}/orders`, { pallet_ids: this.items.map(i => { return i.id }), ...this.formData }, { withCredentials: true })
                 .then(response => {
                     console.log(response.data)
+                    this.requestWasMade = true;
+                    this.dialog = false;
                 })
                 .catch(error => {
                     console.error('Error fetching pallet data:', error);
                 });
+        },
+        onClose() {
+            this.dialog = false;
+            if(this.requestWasMade) {
+                this.$emit('onModalClose');
+                this.requestWasMade = false;
+            }
         }
     }
 }

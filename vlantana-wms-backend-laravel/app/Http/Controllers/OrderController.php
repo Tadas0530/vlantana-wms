@@ -15,16 +15,21 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $company_id = $request->input('company_id');
-        $order_type = $request->input('order_type');
+        $company = auth()->user()->company;
+        $order_type = $request->query('order_type') != null ? $request->query('order_type'): 'created_at';
 
-        $products = Order::where('company_id', $company_id)
+        $page = max((int) $request->query('page', 1), 1); // Ensures minimum page number is 1
+        $limit = max((int) $request->query('limit', 25), 1); // Ensures minimum limit is 1
+
+        $offset = ($page - 1) * $limit;
+
+        $orders = Order::where('company_id', $company->id)
             ->orderBy($order_type)
-            ->offset($request->input('offset'))
-            ->limit($request->input('limit'))
+            ->offset($offset)
+            ->limit($limit)
             ->get();
 
-        return new JsonResponse($products);
+        return new JsonResponse($orders);
     }
 
     /**
@@ -38,8 +43,6 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    //'description',
-    //'company_id'
     public function store(Request $request)
     {
         $user = auth()->user();
