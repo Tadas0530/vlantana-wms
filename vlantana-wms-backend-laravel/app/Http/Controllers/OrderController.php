@@ -42,18 +42,30 @@ class OrderController extends Controller
     //'company_id'
     public function store(Request $request)
     {
-        $company = Company::find($request->input('company_id'));
+        $user = auth()->user();
+        $company = Company::find($user->company_id);
+        $pallet_ids = $request->input('pallet_ids');
 
         if (!$company) {
             return new JsonResponse(["error" => "Pallet must belong to an existing company"]);
         }
 
         $order = Order::create([
+            'order_code' => null,
             'description' => $request->input('description'),
             'status' => $request->input('status')
         ]);
 
+        if (!$order) {
+            return new JsonResponse(['error' => 'failed to create the order']);
+        }
+
+        $order->update([
+            'order_code' => $company->company_name . '-' . sprintf("%06d", $order->id)
+        ]);
+
         $company->orders()->save($order);
+        Pallet::whereIn('id', $pallet_ids)->update(['order_id' => $order->id]);
 
         return new JsonResponse($order);
     }

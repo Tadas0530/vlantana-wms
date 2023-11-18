@@ -28,18 +28,18 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     //
 
-    Route::resource('/products', ProductController::class);
-
-    Route::resource('/companies', CompanyController::class);
-
-    Route::resource('/orders', OrderController::class);
-
-    Route::resource('/drivers', DriverController::class);
-
-    Route::resource('/pallets', PalletController::class);
-
     Route::middleware(['jwt.from.cookie', 'jwt.auth'])->group(function () {
         Route::get('/auth/check', [AuthController::class, 'checkAuth']);
+
+        Route::resource('/products', ProductController::class);
+
+        Route::resource('/companies', CompanyController::class);
+
+        Route::resource('/orders', OrderController::class);
+
+        Route::resource('/drivers', DriverController::class);
+
+        Route::resource('/pallets', PalletController::class);
 
         Route::get('/test-jwt', function() {
            return "You have permission";

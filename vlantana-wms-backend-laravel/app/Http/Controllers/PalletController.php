@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\Order;
 use App\Models\Pallet;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,16 +17,24 @@ class PalletController extends Controller
      */
     public function index(Request $request)
     {
-        $company_id = $request->input('company_id');
-        $order_type = $request->input('order_type');
+        $user = auth()->user();
+        $company_id = $user->company_id;
 
-        $products = Pallet::where('company_id', $company_id)
+        $order_type = $request->query('order_type') != null ? $request->query('order_type'): 'date_arrived';
+        $order_asc = $request->query('order_asc') != null ? $request->query('order_asc'): 'asc';
+
+        $page = max((int) $request->query('page', 1), 1); // Ensures minimum page number is 1
+        $limit = max((int) $request->query('limit', 25), 1); // Ensures minimum limit is 1
+
+        $offset = ($page - 1) * $limit;
+
+        $pallets = Pallet::where('company_id', $company_id)
             ->orderBy($order_type)
-            ->offset($request->input('offset'))
-            ->limit($request->input('limit'))
+            ->offset($offset)
+            ->limit($limit)
             ->get();
 
-        return new JsonResponse($products);
+        return new JsonResponse($pallets);
     }
 
     /**

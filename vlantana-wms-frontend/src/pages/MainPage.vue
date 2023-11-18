@@ -1,13 +1,13 @@
 <template>
     <div class="container-fluid p-0">
         <base-sidebar></base-sidebar>
-        <main-screen></main-screen>
+        <router-view class="take-up-space"></router-view>
     </div>
 </template>
   
 <script>
-import BaseSidebar from '@/components/BaseSidebar.vue';
-import MainScreen from '@/components/MainScreen.vue';
+import BaseSidebar from '@/layouts/default/BaseSidebar.vue';
+import MainScreen from '@/pages/screens/MainScreen.vue';
 
 export default {
     components: {
@@ -18,10 +18,14 @@ export default {
 </script>
   
 <style>
-.container {
+.container-fluid {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 6fr;
     /* Adjust the ratio as needed */
     grid-gap: 20px;
+}
+
+.take-up-space {
+    margin-left: 300px;
 }
 </style>

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,10 +22,10 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'company_id',
+        'role_id',
         'name',
         'email',
         'password',
-        'role',
         'phone_number',
         'photo_path'
     ];
@@ -61,5 +62,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function company() : BelongsTo {
         return $this->belongsTo(Company::class);
+    }
+
+    public function role(): BelongsTo {
+        return $this->belongsTo(Role::class);
     }
 }

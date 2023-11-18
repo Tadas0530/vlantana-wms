@@ -3,14 +3,13 @@
 </template>
 
 <script>
-import urlProvider from "@/utils/url-provider.js"
+import { useRouter } from 'vue-router';
+import apiClient, { setupInterceptors } from './utils/api-client';
 
 export default {
-  // beforeCreate() {
-  //   this.$axios.get(`${urlProvider.getServerEndpoint()}/auth/check`, { withCredentials: true })
-  //   .then(response => {
-  //       if (response.data.isAuthenticated) this.$router.push(localStorage.getItem('lastRoute'))
-  //   })
-  // }
+  beforeCreate() {
+    const router = useRouter();
+    setupInterceptors(router);
+  }
 }
 </script>

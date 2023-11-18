@@ -25,7 +25,7 @@
             Ištrinti
         </v-btn>
 
-        <v-btn class="ms-4" type="submit" @click="changeAuthAction">
+        <v-btn class="ms-4" @click="changeAuthAction">
             {{ currentFormType.value === 0 ? formTypes[1].text : formTypes[0].text }}
         </v-btn>
     </form>
@@ -85,13 +85,31 @@ export default {
         },
         handleCredentials() {
             if (this.currentFormType.value === 1) {
-                this.$axios.post(`${urlProvider.getServerEndpoint()}/login`, this.credentials, { withCredentials: true }).then(response => {
-                    response.status === 'success' ? localStorage.setItem('user', JSON.stringify(response.user)) : console.log('login failed')
-                })
+                this.$axios.post(`${urlProvider.getServerEndpoint()}/login`, this.credentials, { withCredentials: true })
+                    .then(response => {
+                        if (response.data.status === 'success') {
+                            localStorage.setItem('user', JSON.stringify(response.data));
+                            this.$router.push(localStorage.getItem('lastRoute'));
+                        } else {
+                            console.log('login failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during login:', error);
+                    });
             } else {
-                this.$axios.post(`${urlProvider.getServerEndpoint()}/register`, this.credentials, { withCredentials: true }).then(response => {
-                    response.status === 'success' ? localStorage.setItem('user', JSON.stringify(response.user)) : console.log('register failed')
-                })
+                this.$axios.post(`${urlProvider.getServerEndpoint()}/register`, this.credentials, { withCredentials: true })
+                    .then(response => {
+                        if (response.data.status === 'success') {
+                            localStorage.setItem('user', JSON.stringify(response.data));
+                            this.$router.push(localStorage.getItem('lastRoute'));
+                        } else {
+                            console.log('login failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during login:', error);
+                    });
             }
         },
         changeAuthAction() {

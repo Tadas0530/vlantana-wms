@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pallets', function (Blueprint $table) {
             $table->id();
             $table->string('barcode');
+            $table->string('name');
             $table->integer("company_id")->nullable();
             $table->integer("order_id")->nullable();
             $table->integer("quantity");
