@@ -9,7 +9,7 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" sm="12" md="12">
-                                <v-text-field label="Aprašymas*" v-model="formData.description" required></v-text-field>
+                                <v-textarea label="Aprašymas*" v-model="formData.description" required></v-textarea>
                             </v-col>
                             <v-col cols="12" sm="6">
                                 <v-select :items="['Skubus', 'Įprastas']" v-model="formData.status" label="Būsena*"

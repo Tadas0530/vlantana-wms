@@ -1,6 +1,6 @@
 <template>
   <div class="" style="width: max-content;">
-    <h1 class="mt-4">Dabartiniai užsakymai</h1>
+    <h1 class="mt-4">Pateikti užsakymai</h1>
     <p>Sudarytų užsakymų duomenų bazė</p>
   </div>
   <v-data-table hover v-model="selected" :headers="headers" :loading="isLoading"
@@ -19,7 +19,7 @@ export default {
       isLoading: false,
       orderData: [],
       selected: [],
-      limit: 0,
+      limit: 25,
       page: 1,
       headers: [
         {

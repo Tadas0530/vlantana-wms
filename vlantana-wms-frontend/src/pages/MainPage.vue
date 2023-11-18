@@ -27,8 +27,8 @@ export default {
         DisplayOne
     },
     methods: {
-        displayItem(item) {
-            this.$refs.displayOneDialog.displayItem(item);
+        displayItem(data) {
+            this.$refs.displayOneDialog.displayOne(data);
         }
     }
 }
