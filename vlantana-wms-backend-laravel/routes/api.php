@@ -32,7 +32,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::get('/auth/check', [AuthController::class, 'checkAuth']);
 
         Route::resource('/products', ProductController::class);
-        Route::get('/products/barcode', [ProductController::class, 'findByBarcode']);
+        Route::post('/product/barcode', [ProductController::class, 'findByBarcode']);
 
         Route::resource('/companies', CompanyController::class);
 
@@ -41,7 +41,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::resource('/drivers', DriverController::class);
 
         Route::resource('/pallets', PalletController::class);
-        Route::get('/pallet/barcode', [PalletController::class, 'findByBarcode']);
+        Route::post('/pallet/barcode', [PalletController::class, 'findByBarcode']);
 
         Route::get('/test-jwt', function() {
            return "You have permission";

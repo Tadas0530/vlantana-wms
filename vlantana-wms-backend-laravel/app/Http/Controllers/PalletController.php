@@ -20,11 +20,11 @@ class PalletController extends Controller
         $user = auth()->user();
         $company_id = $user->company_id;
 
-        $order_type = $request->query('order_type') != null ? $request->query('order_type'): 'date_arrived';
-        $order_asc = $request->query('order_asc') != null ? $request->query('order_asc'): 'asc';
+        $order_type = $request->query('order_type') != null ? $request->query('order_type') : 'date_arrived';
+        $order_asc = $request->query('order_asc') != null ? $request->query('order_asc') : 'asc';
 
-        $page = max((int) $request->query('page', 1), 1); // Ensures minimum page number is 1
-        $limit = max((int) $request->query('limit', 25), 1); // Ensures minimum limit is 1
+        $page = max((int)$request->query('page', 1), 1); // Ensures minimum page number is 1
+        $limit = max((int)$request->query('limit', 25), 1); // Ensures minimum limit is 1
 
         $offset = ($page - 1) * $limit;
 
@@ -37,7 +37,8 @@ class PalletController extends Controller
         return new JsonResponse($pallets);
     }
 
-    public function findByBarcode(Request $request) {
+    public function findByBarcode(Request $request): JsonResponse
+    {
         $company = auth()->user()->company;
         $pallet = Pallet::where('barcode', $request->input('barcode'))
             ->where('company_id', $company->id)
@@ -98,7 +99,7 @@ class PalletController extends Controller
      */
     public function show(string $id)
     {
-        return new JsonResponse(Pallet::findOr($id, function() {
+        return new JsonResponse(Pallet::findOr($id, function () {
             return ['error' => 'Could not find the pallet'];
         }));
     }

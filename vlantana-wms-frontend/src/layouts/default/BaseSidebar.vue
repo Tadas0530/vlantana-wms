@@ -7,7 +7,7 @@
       <router-link to="/app/orders" class="list-group-item list-group-item-action bg-light">Užsakymai</router-link>
       <router-link to="/app/assigned-orders" class="list-group-item list-group-item-action bg-light">Užsakymų
         surinkimai</router-link>
-        <router-link to="/app/scan" class="list-group-item list-group-item-action bg-light">Skenuoti prekę</router-link>
+        <router-link to="/app/scan" class="list-group-item list-group-item-action bg-light">Skenavimas</router-link>
     </div>
   </div>
 </template>
