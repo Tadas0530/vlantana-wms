@@ -89,7 +89,7 @@ export default {
                     .then(response => {
                         if (response.data.status === 'success') {
                             localStorage.setItem('user', JSON.stringify(response.data));
-                            this.$router.push(localStorage.getItem('lastRoute'));
+                            this.$router.push(localStorage.getItem('lastRoute') ?? '/app/dashboard');
                         } else {
                             console.log('login failed');
                         }

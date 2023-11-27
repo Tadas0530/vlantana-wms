@@ -37,6 +37,35 @@ class PalletController extends Controller
         return new JsonResponse($pallets);
     }
 
+    public function getPalletsByCompany(Request $request)
+    {
+        $companyId = $request->input('companyId');
+
+        $user = auth()->user();
+
+        // validation
+        if ($user->company_id != 4 && $user->role->id != 4)
+        {
+            return response()->json('Unauthorized', 401);
+        }
+
+        $order_type = $request->query('order_type') != null ? $request->query('order_type') : 'date_arrived';
+        $order_asc = $request->query('order_asc') != null ? $request->query('order_asc') : 'asc';
+
+        $page = max((int)$request->query('page', 1), 1); // Ensures minimum page number is 1
+        $limit = max((int)$request->query('limit', 25), 1); // Ensures minimum limit is 1
+
+        $offset = ($page - 1) * $limit;
+
+        $pallets = Pallet::where('company_id', $companyId)
+            ->orderBy($order_type)
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return new JsonResponse($pallets);
+    }
+
     public function findByBarcode(Request $request): JsonResponse
     {
         $company = auth()->user()->company;
@@ -115,9 +144,9 @@ class PalletController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updatePallet(Request $request)
     {
-        $pallet = Pallet::find($id);
+        $pallet = Pallet::find($request->input('pallet_id'));
         $company = Company::find($request->input('company_id'));
 
         if (!$company) {

@@ -5,7 +5,7 @@
                 <order-dialog @onModalClose="handleModalClose" ref="orderDialog"></order-dialog>
             </Teleport>
             <div>
-                <h1 class="mt-4">Įmonei priklausantis inventorius</h1>
+                <h1 class="mt-4">Įmonei <span class="text-info">{{ getSelectedCompany?.company_name }}</span> priklausantis inventorius</h1>
                 <p>Pasirinkite prekes norint pradėti užsakymą</p>
             </div>
             <v-alert style="height: 80px; align-self: center; margin-left: 30px" v-if="error" closable
@@ -27,11 +27,12 @@
 </template>
 
 <script>
-import urlProvider from '@/utils/url-provider';
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import OrderDialog from '@/components/OrderDialog.vue';
 import { Teleport } from 'vue';
 import apiClient from '@/utils/api-client';
+import { mapGetters } from 'vuex';
+import { EventBus } from '@/eventbus/event-bus';
 
 export default {
     emits: [
@@ -59,6 +60,7 @@ export default {
                 { title: 'Paletė išvyko', align: 'end', key: 'date_exported' },
             ],
             palletData: [],
+            companyData: [],
             selected: [],
             limit: 25,
             page: 1,
@@ -70,15 +72,27 @@ export default {
     methods: {
         fetchPallets() {
             this.isLoading = true;
-            apiClient.get(`${urlProvider.getServerEndpoint()}/pallets`, { withCredentials: true })
-                .then(response => {
-                    this.palletData = response.data.map(p => { return { ...p, is_defective: p.is_defective ? 'Taip' : 'Ne' } });
-                    this.isLoading = false;
-                })
-                .catch(error => {
-                    console.error('Error fetching pallet data:', error);
-                    this.isLoading = false;
-                });
+            if (this.$store.getters.getIsClientMode) {
+                apiClient.get('/pallets', { withCredentials: true })
+                    .then(response => {
+                        this.palletData = response.data.map(p => { return { ...p, is_defective: p.is_defective ? 'Taip' : 'Ne' } });
+                        this.isLoading = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching pallet data:', error);
+                        this.isLoading = false;
+                    });
+            } else {
+                apiClient.post('/company/pallets', { companyId: this.$store.getters?.getSelectedCompany?.id } ,{ withCredentials: true })
+                    .then(response => {
+                        this.palletData = response.data.map(p => { return { ...p, is_defective: p.is_defective ? 'Taip' : 'Ne' } });
+                        this.isLoading = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching pallet data:', error);
+                        this.isLoading = false;
+                    });
+            }
         },
         openDialog() {
             this.$refs.orderDialog.toggleDialog(this.selected);
@@ -93,21 +107,26 @@ export default {
         displayOne(event, item) {
             const itemToFormat = item.item;
             const reformatedItem = {
-                    item: {
-                        barcode: { name: 'Barkodas', value: itemToFormat.barcode },
-                        date_arrived: { name: 'Paletė atvyko', value: itemToFormat.date_arrived },
-                        date_exported: { name: 'Paletė išvyko', value: itemToFormat.date_exported },
-                        is_defective: { name: 'Ar brokas', value: itemToFormat.is_defective },
-                        location: { name: 'Vieta', value: itemToFormat.location },
-                        name: { name: 'Pavadinimas', value: itemToFormat.name },
-                        status: { name: 'Būsena', value: itemToFormat.status },
-                        quantity: { name: 'Prekių kiekis ant paletės', value: itemToFormat.quantity },
-                    },
-                    type: 'pallet',
-                    ids: { id: itemToFormat.id, company_id: itemToFormat.company_id, order_id: itemToFormat.order_id }
-                }
+                item: {
+                    barcode: { name: 'Barkodas', value: itemToFormat.barcode },
+                    date_arrived: { name: 'Paletė atvyko', value: itemToFormat.date_arrived },
+                    date_exported: { name: 'Paletė išvyko', value: itemToFormat.date_exported },
+                    is_defective: { name: 'Ar brokas', value: itemToFormat.is_defective },
+                    location: { name: 'Vieta', value: itemToFormat.location },
+                    name: { name: 'Pavadinimas', value: itemToFormat.name },
+                    status: { name: 'Būsena', value: itemToFormat.status },
+                    quantity: { name: 'Prekių kiekis ant paletės', value: itemToFormat.quantity },
+                },
+                type: 'pallet',
+                ids: { id: itemToFormat.id, company_id: itemToFormat.company_id, order_id: itemToFormat.order_id }
+            }
             this.$emit('displayItem', reformatedItem)
-         }
+        }
+    },
+    computed: {
+        ...mapGetters([
+            'getSelectedCompany'
+        ])
     },
     created() {
         this.$router.push({ query: { "limit": this.limit, "page": this.page } }).catch(err => { });
@@ -129,6 +148,11 @@ export default {
                 }
             },
             deep: true
+        },
+        getSelectedCompany: {
+            handler() {
+                this.fetchPallets();
+            }
         }
     },
     mounted() {

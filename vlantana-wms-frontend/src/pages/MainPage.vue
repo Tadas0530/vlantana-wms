@@ -2,6 +2,7 @@
     <div class="container-fluid p-0" style="width: max-content;">
         <Teleport to="body">
             <display-one ref="displayOneDialog"></display-one>
+            <fullscreen-loader ref="loader"></fullscreen-loader>
         </Teleport>
         <base-sidebar></base-sidebar>
         <div class="take-up-space">
@@ -14,6 +15,8 @@
 import BaseSidebar from '@/layouts/default/BaseSidebar.vue';
 import MainScreen from '@/pages/screens/MainScreen.vue';
 import DisplayOne from '@/components/DisplayOne.vue';
+import FullscreenLoader from '@/components/FullscreenLoader.vue';
+import { EventBus } from '@/eventbus/event-bus';
 
 export default {
     data() {
@@ -24,12 +27,16 @@ export default {
     components: {
         BaseSidebar,
         MainScreen,
-        DisplayOne
+        DisplayOne,
+        FullscreenLoader
     },
     methods: {
         displayItem(data) {
             this.$refs.displayOneDialog.displayOne(data);
         }
+    },
+    beforeUnmount() {
+        EventBus.all.clear()
     }
 }
 </script>

@@ -11,6 +11,7 @@ export const setupInterceptors = (router) => {
     response => response,
     error => {
       if (error.response && error.response.status === 401) {
+        localStorage.clear('user');
         router.push('/authentication');
       }
       return Promise.reject(error);

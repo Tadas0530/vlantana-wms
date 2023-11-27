@@ -40,8 +40,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
         Route::resource('/drivers', DriverController::class);
 
+        // pallets
+
         Route::resource('/pallets', PalletController::class);
+        Route::put('/pallet', [PalletController::class, 'updatePallet']);
         Route::post('/pallet/barcode', [PalletController::class, 'findByBarcode']);
+        Route::post('/company/pallets', [PalletController::class, 'getPalletsByCompany']);
 
         Route::get('/test-jwt', function() {
            return "You have permission";

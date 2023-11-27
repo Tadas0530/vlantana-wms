@@ -1,8 +1,8 @@
 <template>
     <div class="" style="width: max-content;">
         <h1 class="mt-4">Skenuokite barkodą</h1>
-        <p>Barkodo skenavimas</p>
-        <v-text-field label="Barkodas" v-model="barcode">
+        <p>Barkodo skenavimas - paletė susideda is 15 simbolių, produktas iš 20.</p>
+        <v-text-field ref="barcodeInput" label="Barkodas" v-model="barcode">
         </v-text-field>
         <v-btn @click="getRecord" v-if="barcode.length === 15 || barcode.length === 20" class="align-self-center"
             prepend-icon="mdi-check-circle">
@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import urlProvider from '@/utils/url-provider';
 import apiClient from '@/utils/api-client';
+import { EventBus } from '@/eventbus/event-bus';
 
 export default {
     data() {
@@ -30,12 +30,14 @@ export default {
     },
     methods: {
         getRecord() {
+            EventBus.emit('open-loader');
             this.itemType = this.barcode.length == 15 ? 'pallet' : 'product'
             this.fetchedItem = null;
             this.error = false;
 
-            apiClient.post(`${urlProvider.getServerEndpoint()}/${this.itemType}/barcode`, { barcode: this.barcode }, { withCredentials: true })
+            apiClient.post(`/${this.itemType}/barcode`, { barcode: this.barcode }, { withCredentials: true })
                 .then(response => {
+                    EventBus.emit('close-loader');
                     this.fetchedItem = response.data;
                     if (Object.keys(this.fetchedItem).length === 0) {
                         this.error = true;
@@ -44,6 +46,7 @@ export default {
                     }
                 })
                 .catch(error => {
+                    EventBus.emit('close-loader');
                     this.error = true;
                     console.error('Error fetching scanned data:', error);
                 });
@@ -57,7 +60,7 @@ export default {
                         barcode: { name: 'Barkodas', value: this.fetchedItem.barcode },
                         date_arrived: { name: 'Paletė atvyko', value: this.fetchedItem.date_arrived },
                         date_exported: { name: 'Paletė išvyko', value: this.fetchedItem.date_exported },
-                        is_defective: { name: 'Ar brokas', value: this.fetchedItem.is_defective },
+                        is_defective: { name: 'Ar brokas', value: this.fetchedItem.is_defective ? 'Taip' : 'Ne' },
                         location: { name: 'Vieta', value: this.fetchedItem.location },
                         name: { name: 'Pavadinimas', value: this.fetchedItem.name },
                         status: { name: 'Būsena', value: this.fetchedItem.status },
@@ -81,7 +84,10 @@ export default {
                 }
             }
             this.$emit('displayItem', reformatedItem)
-        }
+        },
+    },
+    mounted() {
+        this.$refs.barcodeInput.focus();
     }
 }
 </script>
