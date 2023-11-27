@@ -1,9 +1,8 @@
 <template>
-  <div v-if="getIsClientMode || getSelectedCompany" class="">
+  <div v-if="getIsClientMode || getSelectedCompany">
     <h1 class="mt-4">Užsakymų surinkimai</h1>
     <p>Reikiamų užsakymų atrinkimui prekių sąrašas</p>
-    <v-skeleton-loader type="card"></v-skeleton-loader>
-    <v-expansion-panels style="width: 100%;">
+    <v-expansion-panels style="width: 75%;">
       <v-expansion-panel v-for="order in orderData" :key="order.id">
         <v-expansion-panel-title>
           <template v-slot:default="{ expanded }">

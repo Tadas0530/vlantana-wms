@@ -27,8 +27,18 @@ function setOrderStatus(orderId, status) {
     });
 }
 
+function updateOrder(data) {
+    return apiClient.post('/order/status', data, { withCredentials: true })
+    .then(response => {
+    })
+    .catch(error => {
+        console.error('Error fetching pallet data:', error);
+    });
+}
+
 export default {
     getOrdersWithPallets,
     deleteOrder,
-    setOrderStatus
+    setOrderStatus,
+    updateOrder
 }

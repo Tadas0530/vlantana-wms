@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -95,6 +97,23 @@ class AuthController extends Controller
         return response()->json([
             'isAuthenticated' => $isAuthenticated
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            // Get the token from the request header
+            $token = $request->header('Authorization');
+
+            // Try to invalidate the token
+            JWTAuth::setToken($token)->invalidate();
+
+            // If the token has been invalidated, return a success response
+            return response()->json(['message' => 'User successfully logged out'], 200);
+        } catch (JWTException $e) {
+            // Something went wrong whilst attempting to encode the token
+            return response()->json(['message' => 'Failed to logout, please try again'], 500);
+        }
     }
 
     protected function respondWithToken($token, $user): JsonResponse

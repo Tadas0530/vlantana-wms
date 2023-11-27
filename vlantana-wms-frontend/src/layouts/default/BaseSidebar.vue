@@ -1,18 +1,21 @@
 <template>
   <div class="bg-light border-right" id="sidebar-wrapper">
-    <div class="sidebar-heading">Inventoriaus valdymo sistema</div>
+    <div class="sidebar-heading">Sandėlio valdymo informacinė sistema</div>
     <div class="list-group list-group-flush">
       <router-link to="/app/dashboard" class="list-group-item list-group-item-action">Apžvalga</router-link>
       <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/inventory"
         class="list-group-item list-group-item-action">Inventorius</router-link>
       <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/orders"
         class="list-group-item list-group-item-action">Užsakymai</router-link>
-      <router-link to="/app/assigned-orders" class="list-group-item list-group-item-action">Užsakymų
+      <router-link v-if="[1, 2, 4].includes(this.userRole)" to="/app/assigned-orders" class="list-group-item list-group-item-action">Užsakymų
         surinkimai</router-link>
       <router-link to="/app/scan" class="list-group-item list-group-item-action">Skenavimas</router-link>
       <v-select v-if="isDropdownAvailable" v-model="selectedCompany" label="Įmonė" :items="companyData"
         item-title="company_name" item-value="id" class="sidebar-select"></v-select>
     </div>
+    <v-col cols="auto" style="position: fixed; bottom: 0;">
+        <v-btn @click="logout" icon="mdi-account" size="x-small"></v-btn>
+      </v-col>
   </div>
 </template>
   
@@ -46,6 +49,7 @@ export default {
     },
     autoChooseCompany(id) {
       // if client mode choose by company id
+      const user = JSON.parse(localStorage.getItem('user'))
 
       console.log('client mode: ' + this.getIsClientMode)
       if (this.getIsClientMode) {
@@ -75,6 +79,12 @@ export default {
 
       // config is client account
       user.user.company_id === 4 ? this.$store.commit('setIsClientMode', false) : this.$store.commit('setIsClientMode', true)
+    },
+    logout() {
+      apiClient.post('/logout', _, { withCredentials: true }).then(response => {
+        localStorage.clear('user')
+        this.$router.push('/authentication')
+      })
     }
   },
   watch: {
@@ -106,7 +116,7 @@ export default {
   },
   mounted() {
     if (this.companyData.length === 0) this.fetchCompanies();
-    document.title = "Sandėlio informacinė sistema";
+    document.title = "Sandėlio valdymo informacinė sistema";
   }
 }
 </script>

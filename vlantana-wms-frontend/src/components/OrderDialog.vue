@@ -47,6 +47,7 @@
 <script>
 import urlProvider from '@/utils/url-provider';
 import apiClient from '@/utils/api-client';
+import { mapGetters } from 'vuex';
 
 export default {
     emits: ['onModalClose'],
@@ -61,25 +62,43 @@ export default {
             requestWasMade: false
         }
     },
+    computed: {
+        ...mapGetters([
+            'getSelectedCompany',
+            'getIsClientMode'
+        ])
+    },
     methods: {
         toggleDialog(order_items) {
             this.dialog = !this.dialog;
             this.items = order_items
         },
         handleOrderCreation() {
-            apiClient.post(`${urlProvider.getServerEndpoint()}/orders`, { pallet_ids: this.items.map(i => { return i.id }), ...this.formData }, { withCredentials: true })
-                .then(response => {
-                    console.log(response.data)
-                    this.requestWasMade = true;
-                    this.dialog = false;
-                })
-                .catch(error => {
-                    console.error('Error fetching pallet data:', error);
-                });
+            if (this.getIsClientMode) {
+                apiClient.post(`${urlProvider.getServerEndpoint()}/orders`, { pallet_ids: this.items.map(i => { return i.id }), ...this.formData }, { withCredentials: true })
+                    .then(response => {
+                        console.log(response.data)
+                        this.requestWasMade = true;
+                        this.dialog = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching pallet data:', error);
+                    });
+            } else {
+                apiClient.post(`${urlProvider.getServerEndpoint()}/orders`, { companyId: this.getSelectedCompany.id, pallet_ids: this.items.map(i => { return i.id }), ...this.formData }, { withCredentials: true })
+                    .then(response => {
+                        console.log(response.data)
+                        this.requestWasMade = true;
+                        this.dialog = false;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching pallet data:', error);
+                    });
+            }
         },
         onClose() {
             this.dialog = false;
-            if(this.requestWasMade) {
+            if (this.requestWasMade) {
                 this.$emit('onModalClose');
                 this.requestWasMade = false;
             }

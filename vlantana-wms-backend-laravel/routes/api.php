@@ -43,6 +43,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::get('/order-preparation', [OrderController::class, 'getOrdersWithPallets']);
         Route::post('/company/order-preparation', [OrderController::class, 'getOrdersWithPalletsByCompany']);
         Route::post('/order/delete', [OrderController::class, 'destroyById']);
+        Route::put('/order/update', [OrderController::class, 'updateOrder']);
         Route::post('/order/status', [OrderController::class, 'setOrderStatus']);
 
         // drivers
@@ -60,13 +61,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::get('/test-jwt', function() {
            return "You have permission";
         });
+
+        // logout
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
 
     Route::get('/echo', function (Request $request) {
         return "Dirbam dirbam dirbam";
-    });
-
-    Route::middleware('role.level:1,2,3')->group(function () {
-
     });
 });

@@ -5,11 +5,11 @@
             <v-text-field v-if="currentFormType.value === 0" v-model="credentials.name"
                 label="Pilnas vardas"></v-text-field>
 
-            <v-text-field v-model="credentials.email" label="El. paštas"></v-text-field>
+            <v-text-field type="email" v-model="credentials.email" label="El. paštas"></v-text-field>
 
-            <v-text-field v-model="credentials.password" label="Slaptažodis"></v-text-field>
+            <v-text-field type="password" v-model="credentials.password" label="Slaptažodis"></v-text-field>
 
-            <v-text-field v-if="currentFormType.value === 0" v-model="credentials.passwordRepeat"
+            <v-text-field type="password" v-if="currentFormType.value === 0" v-model="credentials.passwordRepeat"
                 label="Slaptažodžio pakartojimas"></v-text-field>
 
             <v-select v-if="currentFormType.value === 0" v-model="credentials.company_id" label="Įmonė" :items="companies"

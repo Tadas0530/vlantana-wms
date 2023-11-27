@@ -92,7 +92,13 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-        $company = Company::find($user->company_id);
+        $company = null;
+
+        if ($request->input('companyId')) {
+            $company = Company::find($request->input('companyId'));
+        } else {
+            $company = Company::find($user->company_id);
+        }
         $pallet_ids = $request->input('pallet_ids');
 
         if (!$company) {
@@ -140,10 +146,10 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateOrder(Request $request)
     {
-        $order = Order::find($id);
-        $company = Company::find($request->input('company_id'));
+        $order = Order::find($request->input('orderId'));
+        $company = Company::find($request->input('companyId'));
 
         if (!$company) {
             return new JsonResponse(["error" => "Pallet must belong to an existing company"]);

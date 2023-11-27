@@ -84,6 +84,8 @@ export default {
                 palletService.createPallet(this.items, this.neededIds.company_id).then(data => this.dialog = false);
             } else if (this.itemType === 'pallet' && this.actionType === 'display') {
                 palletService.updatePallet(this.items, this.neededIds.id, this.neededIds.company_id).then(data => this.dialog = false);
+            } else if (this.itemType === 'order' && this.actionType === 'display') {
+                orderService.updateOrder({ description: this.items[0].value, status: this.items[1].value, orderId: this.neededIds.id, companyId: this.neededIds.company_id})
             }
         },
         handleDelete() {
