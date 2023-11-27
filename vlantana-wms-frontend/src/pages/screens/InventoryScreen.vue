@@ -1,9 +1,9 @@
 <template>
-    <div class="">
+    <div v-if="getIsClientMode || getSelectedCompany">
         <v-alert style="height: 80px; align-self: center; margin-left: 30px" class="pallet-alert" v-if="error" closable
-                @click:close="warningOnClose"
-                :text="`${lastSelectedItem.barcode} ${lastSelectedItem.name} jau priklauso užsakymui! Tęsiant toliau ši paletė nebepriklausys senąjam užsakymui.`"
-                type="warning"></v-alert>
+            @click:close="warningOnClose"
+            :text="`${lastSelectedItem.barcode} ${lastSelectedItem.name} jau priklauso užsakymui! Tęsiant toliau ši paletė nebepriklausys senąjam užsakymui.`"
+            type="warning"></v-alert>
         <div class="d-flex justify-content-between">
             <Teleport to="body">
                 <order-dialog @onModalClose="handleModalClose" ref="orderDialog"></order-dialog>
@@ -146,7 +146,8 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getSelectedCompany'
+            'getSelectedCompany',
+            'getIsClientMode'
         ])
     },
     watch: {
@@ -180,7 +181,7 @@ export default {
         if (this.palletData.length === 0) this.fetchPallets();
         EventBus.on('add-pallet', (item) => {
             console.log('emit received in intenroyscreen' + JSON.stringify(item))
-            this.palletData.push({...item, is_defective: item.is_defective ? 'Taip' : 'Ne' })
+            this.palletData.push({ ...item, is_defective: item.is_defective ? 'Taip' : 'Ne' })
         })
         EventBus.on('remove-pallet', (id) => {
             this.palletData = this.palletData.filter(item => item.id !== itemId);

@@ -80,11 +80,9 @@ export default {
         },
         handleUpdate() {
             if (this.itemType === 'pallet' && this.actionType === 'create') {
-                palletService.createPallet(this.items, this.neededIds.company_id);
-                console.log('creating')
+                palletService.createPallet(this.items, this.neededIds.company_id).then(data => this.dialog = false);
             } else if (this.itemType === 'pallet' && this.actionType === 'display') {
-                palletService.updatePallet(this.items, this.neededIds.id, this.neededIds.company_id);
-                console.log('updating')
+                palletService.updatePallet(this.items, this.neededIds.id, this.neededIds.company_id).then(data => this.dialog = false);
             }
         }
     }

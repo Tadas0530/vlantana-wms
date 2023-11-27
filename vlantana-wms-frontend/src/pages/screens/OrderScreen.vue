@@ -1,5 +1,5 @@
 <template>
-  <div class="" style="width: max-content;">
+  <div  v-if="getIsClientMode || getSelectedCompany" style="width: max-content;">
     <h1 class="mt-4">Pateikti užsakymai</h1>
     <p>Sudarytų užsakymų duomenų bazė</p>
   </div>
@@ -66,6 +66,7 @@ export default {
   computed: {
     ...mapGetters([
       'getSelectedCompany',
+      'getIsClientMode'
     ])
   },
   watch: {

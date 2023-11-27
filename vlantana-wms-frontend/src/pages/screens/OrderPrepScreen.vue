@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div v-if="getIsClientMode || getSelectedCompany" class="">
     <h1 class="mt-4">Užsakymų surinkimai</h1>
     <p>Reikiamų užsakymų atrinkimui prekių sąrašas</p>
     <v-skeleton-loader type="card"></v-skeleton-loader>
@@ -47,6 +47,7 @@
 <script>
 import orderService from '@/services/order-service';
 import { EventBus } from '@/eventbus/event-bus';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -59,6 +60,12 @@ export default {
         'Pavadinimas'
       ]
     }
+  },
+  computed: {
+    ...mapGetters([
+      'getSelectedCompany',
+      'getIsClientMode'
+    ])
   },
   mounted() {
     EventBus.emit('open-loader');
