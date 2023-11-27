@@ -18,7 +18,7 @@
                     <v-spacer></v-spacer>
                     <v-btn @click="closeDialog" color="yellow-darken-1" variant="text">
                         Uždaryti
-                    </v-btn> <v-btn @click="closeDialog" color="red-darken-1" variant="text">
+                    </v-btn> <v-btn @click="handleDelete" color="red-darken-1" variant="text">
                         Ištrinti
                     </v-btn>
                     <v-btn color="green-darken-1" :disabled="!hasDataChanged" variant="text" @click="handleUpdate">
@@ -33,6 +33,7 @@
 <script>
 import objectUtils from '@/utils/object-utils';
 import palletService from '@/services/pallet-service';
+import orderService from '@/services/order-service';
 
 export default {
     data() {
@@ -83,6 +84,13 @@ export default {
                 palletService.createPallet(this.items, this.neededIds.company_id).then(data => this.dialog = false);
             } else if (this.itemType === 'pallet' && this.actionType === 'display') {
                 palletService.updatePallet(this.items, this.neededIds.id, this.neededIds.company_id).then(data => this.dialog = false);
+            }
+        },
+        handleDelete() {
+            if (this.itemType === 'pallet') {
+                palletService.deletePallet(this.neededIds.id)
+            } else if (this.itemType === 'order') {
+                orderService.deleteOrder(this.neededIds.id)
             }
         }
     }

@@ -42,6 +42,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('/company/orders', [OrderController::class, 'getOrdersByCompany']);
         Route::get('/order-preparation', [OrderController::class, 'getOrdersWithPallets']);
         Route::post('/company/order-preparation', [OrderController::class, 'getOrdersWithPalletsByCompany']);
+        Route::post('/order/delete', [OrderController::class, 'destroyById']);
+        Route::post('/order/status', [OrderController::class, 'setOrderStatus']);
 
         // drivers
 
@@ -50,6 +52,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         // pallets
 
         Route::resource('/pallets', PalletController::class);
+        Route::post('/pallet/delete', [PalletController::class, 'destroyById']);
         Route::put('/pallet', [PalletController::class, 'updatePallet']);
         Route::post('/pallet/barcode', [PalletController::class, 'findByBarcode']);
         Route::post('/company/pallets', [PalletController::class, 'getPalletsByCompany']);

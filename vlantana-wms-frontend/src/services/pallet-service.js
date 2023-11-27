@@ -19,6 +19,15 @@ function createPallet(items, company_id) {
     });
 }
 
+function deletePallet(palletId) {
+    return apiClient.post('/pallet/delete', { palletId: palletId }, { withCredentials: true })
+    .then(response => {
+    })
+    .catch(error => {
+        console.error('Error fetching pallet data:', error);
+    });
+}
+
 function mapPallet(pallet) {
     return { 
         name: pallet[5].value,
@@ -34,5 +43,6 @@ function mapPallet(pallet) {
 
 export default {
     updatePallet,
-    createPallet
+    createPallet,
+    deletePallet
 }

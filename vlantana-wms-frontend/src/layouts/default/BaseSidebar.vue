@@ -106,6 +106,7 @@ export default {
   },
   mounted() {
     if (this.companyData.length === 0) this.fetchCompanies();
+    document.title = "Sandėlio informacinė sistema";
   }
 }
 </script>

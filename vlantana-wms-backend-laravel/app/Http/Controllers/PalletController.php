@@ -173,9 +173,13 @@ class PalletController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroyById(Request $request)
     {
-        $product = Pallet::find($id);
+        $validation = $request->validate([
+            'palletId' => 'required|integer'
+        ]);
+
+        $product = Pallet::find($validation['palletId']);
         $product->delete();
     }
 }

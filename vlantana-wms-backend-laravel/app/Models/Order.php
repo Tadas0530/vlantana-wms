@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     use HasFactory;
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Before the parent model is deleted, set the parent_id of its children to null
+        static::deleting(function ($parent) {
+            $parent->pallets()->update(['order_id' => null]);
+        });
+    }
 
     protected $fillable = [
         'description',

@@ -1,9 +1,9 @@
 <template>
-  <div  v-if="getIsClientMode || getSelectedCompany" style="width: max-content;">
+  <div v-if="getIsClientMode || getSelectedCompany" style="width: max-content;">
     <h1 class="mt-4">Pateikti užsakymai</h1>
     <p>Sudarytų užsakymų duomenų bazė</p>
   </div>
-  <v-data-table hover v-model="selected" :headers="headers" :loading="isLoading"
+  <v-data-table @click:row="displayOne" v-model="selected" :headers="headers" :loading="isLoading"
     loading-text="Kraunami užsakymų duomenys..." :items="orderData" v-model:items-per-page="limit" item-value="order_code"
     return-object show-select></v-data-table>
 </template>
@@ -51,7 +51,7 @@ export default {
             this.isLoading = false;
           });
       } else {
-        apiClient.post('/company/orders', { companyId: this.$store.getters.getSelectedCompany?.id}, { withCredentials: true })
+        apiClient.post('/company/orders', { companyId: this.$store.getters.getSelectedCompany?.id }, { withCredentials: true })
           .then(response => {
             this.orderData = response.data.map(o => { return { ...o, created_at: new Date(o.created_at).toLocaleString(), updated_at: new Date(o.updated_at).toLocaleString() } });
             this.isLoading = false;
@@ -61,6 +61,19 @@ export default {
             this.isLoading = false;
           });
       }
+    },
+    displayOne(event, item) {
+      const itemToFormat = item.item;
+      const reformatedItem = {
+        item: {
+          description: { name: 'Aprašymas', value: itemToFormat.description },
+          status: { name: 'Būsena', value: itemToFormat.status },
+        },
+        type: 'order',
+        action: 'display',
+        ids: { id: itemToFormat.id, company_id: itemToFormat.company_id, order_id: itemToFormat.order_id }
+      }
+      this.$emit('displayItem', reformatedItem)
     },
   },
   computed: {

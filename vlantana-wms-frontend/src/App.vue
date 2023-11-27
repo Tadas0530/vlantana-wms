@@ -4,7 +4,7 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import apiClient, { setupInterceptors } from './utils/api-client';
+import { setupInterceptors } from './utils/api-client';
 
 export default {
   beforeCreate() {

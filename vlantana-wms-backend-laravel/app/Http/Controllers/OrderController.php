@@ -52,7 +52,21 @@ class OrderController extends Controller
     }
 
     public function getOrdersWithPallets() {
+        $orders = Order::with('pallets')->get();
         return response()->json(Order::with('pallets')->get());
+    }
+
+    public function setOrderStatus(Request $request) {
+        $data = $request->validate([
+            'orderId' => 'required|integer',
+            'status' => 'required|string|max:30'
+        ]);
+
+        $order = Order::find($data['orderId']);
+        $order->status = $data['status'];
+        $order->save();
+
+        return response()->json($order);
     }
 
     public function getOrdersWithPalletsByCompany(Request $request) {
@@ -148,9 +162,13 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroyById(Request $request)
     {
-        $order = Order::find($id);
+        $validation = $request->validate([
+            'orderId' => 'required|integer'
+        ]);
+
+        $order = Order::find($validation['orderId']);
         $order->delete();
     }
 }
