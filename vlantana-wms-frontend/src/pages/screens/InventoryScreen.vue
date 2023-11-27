@@ -1,17 +1,18 @@
 <template>
     <div class="">
+        <v-alert style="height: 80px; align-self: center; margin-left: 30px" class="pallet-alert" v-if="error" closable
+                @click:close="warningOnClose"
+                :text="`${lastSelectedItem.barcode} ${lastSelectedItem.name} jau priklauso užsakymui! Tęsiant toliau ši paletė nebepriklausys senąjam užsakymui.`"
+                type="warning"></v-alert>
         <div class="d-flex justify-content-between">
             <Teleport to="body">
                 <order-dialog @onModalClose="handleModalClose" ref="orderDialog"></order-dialog>
             </Teleport>
             <div>
-                <h1 class="mt-4">Įmonei <span class="text-info">{{ getSelectedCompany?.company_name }}</span> priklausantis inventorius</h1>
+                <h1 class="mt-4">Įmonei <span class="text-info">{{ getSelectedCompany?.company_name }}</span> priklausantis
+                    inventorius</h1>
                 <p>Pasirinkite prekes norint pradėti užsakymą</p>
             </div>
-            <v-alert style="height: 80px; align-self: center; margin-left: 30px" v-if="error" closable
-                @click:close="warningOnClose"
-                :text="`${lastSelectedItem.barcode} ${lastSelectedItem.name} jau priklauso užsakymui! Sudarius užsakymą paletė nebepriklausys senąjam užsakymui.`"
-                type="warning"></v-alert>
             <v-btn @click="openDialog" v-if="selected.length !== 0 && !error" class="align-self-center"
                 prepend-icon="mdi-check-circle">
                 <template v-slot:prepend>
@@ -24,6 +25,7 @@
             loading-text="Kraunami duomenys..." :items="palletData" v-model:items-per-page="limit" item-value="name"
             return-object show-select style="width: max-content;"></v-data-table>
     </div>
+    <v-btn icon="mdi-plus" class="plus-button-bottom" @click="createOne" size="large"></v-btn>
 </template>
 
 <script>
@@ -51,7 +53,7 @@ export default {
                     align: 'start',
                     key: 'name',
                 },
-                { title: 'Barkodas', align: 'end', key: 'barcode' },
+                { title: 'Brūkšninis kodas', align: 'end', key: 'barcode' },
                 { title: 'Prekių kiekis ant paletės', align: 'end', key: 'quantity' },
                 { title: 'Ar brokas', align: 'end', key: 'is_defective' },
                 { title: 'Vieta', align: 'end', key: 'location' },
@@ -83,7 +85,7 @@ export default {
                         this.isLoading = false;
                     });
             } else {
-                apiClient.post('/company/pallets', { companyId: this.$store.getters?.getSelectedCompany?.id } ,{ withCredentials: true })
+                apiClient.post('/company/pallets', { companyId: this.$store.getters?.getSelectedCompany?.id }, { withCredentials: true })
                     .then(response => {
                         this.palletData = response.data.map(p => { return { ...p, is_defective: p.is_defective ? 'Taip' : 'Ne' } });
                         this.isLoading = false;
@@ -118,18 +120,34 @@ export default {
                     quantity: { name: 'Prekių kiekis ant paletės', value: itemToFormat.quantity },
                 },
                 type: 'pallet',
+                action: 'display',
                 ids: { id: itemToFormat.id, company_id: itemToFormat.company_id, order_id: itemToFormat.order_id }
             }
             this.$emit('displayItem', reformatedItem)
+        },
+        createOne() {
+            const itemProps = {
+                item: {
+                    barcode: { name: 'Barkodas', value: '' },
+                    date_arrived: { name: 'Paletė atvyko', value: '' },
+                    date_exported: { name: 'Paletė išvyko', value: '' },
+                    is_defective: { name: 'Ar brokas', value: '' },
+                    location: { name: 'Vieta', value: '' },
+                    name: { name: 'Pavadinimas', value: '' },
+                    status: { name: 'Būsena', value: '' },
+                    quantity: { name: 'Prekių kiekis ant paletės', value: '' },
+                },
+                type: 'pallet',
+                action: 'create',
+                ids: { company_id: this.$store.getters?.getSelectedCompany?.id }
+            }
+            this.$emit('displayItem', itemProps)
         }
     },
     computed: {
         ...mapGetters([
             'getSelectedCompany'
         ])
-    },
-    created() {
-        this.$router.push({ query: { "limit": this.limit, "page": this.page } }).catch(err => { });
     },
     watch: {
         limit: {
@@ -155,11 +173,38 @@ export default {
             }
         }
     },
+    created() {
+        this.$router.push({ query: { "limit": this.limit, "page": this.page } }).catch(err => { });
+    },
     mounted() {
         if (this.palletData.length === 0) this.fetchPallets();
+        EventBus.on('add-pallet', (item) => {
+            console.log('emit received in intenroyscreen' + JSON.stringify(item))
+            this.palletData.push({...item, is_defective: item.is_defective ? 'Taip' : 'Ne' })
+        })
+        EventBus.on('remove-pallet', (id) => {
+            this.palletData = this.palletData.filter(item => item.id !== itemId);
+        })
+    },
+    beforeUnmount() {
+        EventBus.off('add-pallet');
+        EventBus.off('remove-pallet');
     }
 }
 </script>
 
-<styles>
-</styles>
+<style>
+.pallet-alert {
+    height: 80px;
+    align-self: center;
+    position: sticky;
+    top: 1rem;
+    right: 1rem;
+}
+
+.plus-button-bottom {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+}
+</style>

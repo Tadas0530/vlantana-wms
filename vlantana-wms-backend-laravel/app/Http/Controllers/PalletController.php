@@ -69,6 +69,13 @@ class PalletController extends Controller
     public function findByBarcode(Request $request): JsonResponse
     {
         $company = auth()->user()->company;
+
+        if ($company->id == 4)
+        {
+            $pallet = Pallet::where('barcode', $request->input('barcode'))->first();
+            return response()->json($pallet);
+        }
+
         $pallet = Pallet::where('barcode', $request->input('barcode'))
             ->where('company_id', $company->id)
             ->first();
@@ -98,13 +105,13 @@ class PalletController extends Controller
     public function store(Request $request)
     {
         $company = Company::find($request->input('company_id'));
-        $order = Order::find($request->input('order_id'));
 
         if (!$company) {
             return new JsonResponse(["error" => "Pallet must belong to an existing company"]);
         }
 
         $pallet = Pallet::create([
+            'name' => $request->input('name'),
             'barcode' => $request->input('barcode'),
             'quantity' => $request->input('quantity'),
             'is_defective' => $request->input('is_defective'),
@@ -115,10 +122,6 @@ class PalletController extends Controller
         ]);
 
         $company->pallets()->save($pallet);
-
-        if ($order) {
-            $order->pallets()->save($pallet);
-        }
 
         return new JsonResponse($pallet);
     }
@@ -154,6 +157,7 @@ class PalletController extends Controller
         }
 
         $pallet->update([
+            'name' => $request->input('name'),
             'barcode' => $request->input('barcode'),
             'quantity' => $request->input('quantity'),
             'is_defective' => $request->input('is_defective'),

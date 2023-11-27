@@ -67,6 +67,7 @@ export default {
                         quantity: { name: 'Prekių kiekis ant paletės', value: this.fetchedItem.quantity },
                     },
                     type: 'pallet',
+                    action: 'display',
                     ids: { id: this.fetchedItem.id, company_id: this.fetchedItem.company_id, order_id: this.fetchedItem.order_id }
                 }
             } else {
@@ -80,6 +81,7 @@ export default {
                         description: { name: 'Aprašymas', value: this.fetchedItem.description },
                     },
                     type: 'product',
+                    action: 'display',
                     ids: { id: this.fetchedItem.id, company_id: this.fetchedItem.company_id, order_id: this.fetchedItem.order_id }
                 }
             }

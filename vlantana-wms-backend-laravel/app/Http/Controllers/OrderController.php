@@ -32,6 +32,38 @@ class OrderController extends Controller
         return new JsonResponse($orders);
     }
 
+    public function getOrdersByCompany(Request $request) {
+        $companyid = $request->input('companyId');
+
+        $order_type = $request->query('order_type') != null ? $request->query('order_type'): 'created_at';
+
+        $page = max((int) $request->query('page', 1), 1); // Ensures minimum page number is 1
+        $limit = max((int) $request->query('limit', 25), 1); // Ensures minimum limit is 1
+
+        $offset = ($page - 1) * $limit;
+
+        $orders = Order::where('company_id', $companyid)
+            ->orderBy($order_type)
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        return new JsonResponse($orders);
+    }
+
+    public function getOrdersWithPallets() {
+        return response()->json(Order::with('pallets')->get());
+    }
+
+    public function getOrdersWithPalletsByCompany(Request $request) {
+
+        $data = $request->validate([
+           'companyId' => 'required|integer|exists:companies,id'
+        ]);
+
+        return response()->json(Order::where('company_id', $data['companyId'])->with('pallets')->get());
+    }
+
     /**
      * Show the form for creating a new resource.
      */

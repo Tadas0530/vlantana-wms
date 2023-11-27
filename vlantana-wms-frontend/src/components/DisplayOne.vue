@@ -8,22 +8,21 @@
                 <v-container style="width: 80vh;">
                     <v-row>
                         <v-col v-for="item in items" cols="12" sm="12" md="6">
-                            <v-text-field :autofocus="item.name === 'Barkodas'" v-model="item.value" style="min-width: 150px; min-height: 100px;"
-                                :label="item.name">
+                            <v-text-field :autofocus="item.name === 'Barkodas'" v-model="item.value"
+                                style="min-width: 150px; min-height: 100px;" :label="item.name">
                             </v-text-field>
                         </v-col>
                     </v-row>
                 </v-container>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="closeDialog" color="red-darken-1" variant="text">
-                        Ištrinti
-                    </v-btn>
                     <v-btn @click="closeDialog" color="yellow-darken-1" variant="text">
                         Uždaryti
+                    </v-btn> <v-btn @click="closeDialog" color="red-darken-1" variant="text">
+                        Ištrinti
                     </v-btn>
                     <v-btn color="green-darken-1" :disabled="!hasDataChanged" variant="text" @click="handleUpdate">
-                        Atnaujinti
+                        {{ actionType === 'display' ? 'Atnaujinti' : 'Sukurti' }}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -33,18 +32,19 @@
 
 <script>
 import objectUtils from '@/utils/object-utils';
+import palletService from '@/services/pallet-service';
 
 export default {
     data() {
         return {
             dialog: false,
             displayItem: { name: "Algis", age: 22 },
-            // viable types order, pallet, product
             itemType: null,
             items: [],
             neededIds: null,
             initialItemsState: null,
-            itemName: ''
+            itemName: '',
+            actionType: 'display',
         }
     },
     computed: {
@@ -59,11 +59,12 @@ export default {
             }
         },
         hasDataChanged() {
-        return !objectUtils.deepEqual(this.items, this.initialItemsState);
-    }
+            return !objectUtils.deepEqual(this.items, this.initialItemsState);
+        }
     },
     methods: {
         displayOne(data) {
+            this.actionType = data.action;
             this.neededIds = data.ids;
             this.itemType = data.type;
             Object.entries(data.item).forEach(entry => this.items.push(entry[1]));
@@ -73,13 +74,19 @@ export default {
         closeDialog() {
             console.log('closed')
             this.dialog = false;
-            this.itemType = null,
-            this.items = [],
-            this.neededIds = null
+            this.itemType = null;
+            this.items = [];
+            this.neededIds = null;
         },
         handleUpdate() {
-            console.log('not implemented')
+            if (this.itemType === 'pallet' && this.actionType === 'create') {
+                palletService.createPallet(this.items, this.neededIds.company_id);
+                console.log('creating')
+            } else if (this.itemType === 'pallet' && this.actionType === 'display') {
+                palletService.updatePallet(this.items, this.neededIds.id, this.neededIds.company_id);
+                console.log('updating')
+            }
         }
-    },
+    }
 }
 </script>

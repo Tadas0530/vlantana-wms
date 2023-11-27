@@ -2,16 +2,12 @@
   <div class="bg-light border-right" id="sidebar-wrapper">
     <div class="sidebar-heading">Inventoriaus valdymo sistema</div>
     <div class="list-group list-group-flush">
-      <router-link to="/app/dashboard" class="list-group-item list-group-item-action bg-light">Apžvalga</router-link>
-      <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/inventory"
-        class="list-group-item list-group-item-action bg-light">Inventorius</router-link>
-      <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/orders"
-        class="list-group-item list-group-item-action bg-light">Užsakymai</router-link>
-      <router-link to="/app/assigned-orders" class="list-group-item list-group-item-action bg-light">Užsakymų
-        surinkimai</router-link>
-      <router-link to="/app/scan" class="list-group-item list-group-item-action bg-light">Skenavimas</router-link>
-      <v-select v-if="isDropdownAvailable" v-model="selectedCompany" label="Įmonė" :items="companyData"
-        item-title="company_name" item-value="id"></v-select>
+      <router-link to="/app/dashboard" class="list-group-item list-group-item-action">Apžvalga</router-link>
+      <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/inventory" class="list-group-item list-group-item-action">Inventorius</router-link>
+      <router-link v-if="[1, 3, 4].includes(this.userRole)" to="/app/orders" class="list-group-item list-group-item-action">Užsakymai</router-link>
+      <router-link to="/app/assigned-orders" class="list-group-item list-group-item-action">Užsakymų surinkimai</router-link>
+      <router-link to="/app/scan" class="list-group-item list-group-item-action">Skenavimas</router-link>
+      <v-select v-if="isDropdownAvailable" v-model="selectedCompany" label="Įmonė" :items="companyData" item-title="company_name" item-value="id" class="sidebar-select"></v-select>
     </div>
   </div>
 </template>
@@ -82,5 +78,65 @@ export default {
   z-index: 1000;
   overflow-y: auto;
   position: fixed;
+  background-color: #343a40 !important; /* Dark background for modern look */
+  color: #fff; /* Light text for contrast */
+}
+
+.sidebar-heading {
+  padding: 10px 15px;
+  text-align: center;
+  background-color: #343a40; /* Match the sidebar color */
+  color: white;
+  font-size: 1.2em;
+  border-bottom: 1px solid #495057; /* Slightly lighter color for subtle separation */
+}
+
+.list-group-item {
+  border: none;
+  padding: 15px 20px;
+  color: #fff;
+  background-color: #343a40; /* Consistent with sidebar color */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.list-group-item-action.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.sidebar-select {
+  border: none;
+  margin: 10px;
+  color: #fff; /* Updated to white for visibility */
+  background-color: #343a40; /* Match the sidebar color */
+}
+
+/* Additional styles for the select dropdown to match the sidebar theme */
+.sidebar-select .v-select {
+  background-color: #343a40;
+  color: #fff;
+}
+
+/* Ensure that the border of the dropdown matches */
+.v-select .vs__dropdown-toggle {
+  border-color: #495057;
+}
+
+/* Style for the selected item in the dropdown */
+.v-select .vs__selected {
+  background-color: #495057;
+  color: #fff;
+}
+
+/* Style for dropdown items on hover */
+.v-select .vs__dropdown-menu li:hover {
+  background-color: #495057;
+  color: #fff !important;
+}
+
+/* Style for the active link */
+.router-link-exact-active, .router-link-exact-active:focus, .router-link-exact-active:hover {
+  background-color: #fbfbfc; /* Blue color for active state */
+  color: black;
 }
 </style>

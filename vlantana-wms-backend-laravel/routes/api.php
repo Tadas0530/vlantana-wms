@@ -36,7 +36,14 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
         Route::resource('/companies', CompanyController::class);
 
+        // orders
+
         Route::resource('/orders', OrderController::class);
+        Route::post('/company/orders', [OrderController::class, 'getOrdersByCompany']);
+        Route::get('/order-preparation', [OrderController::class, 'getOrdersWithPallets']);
+        Route::post('/company/order-preparation', [OrderController::class, 'getOrdersWithPalletsByCompany']);
+
+        // drivers
 
         Route::resource('/drivers', DriverController::class);
 

@@ -1,17 +1,38 @@
-import apiClient from "@/utils/api-client";
+import apiClient from "@/utils/api-client"
 
-function updatePallet() {
-    apiClient.get('/pallets', { withCredentials: true })
+function updatePallet(items, pallet_id, company_id) {
+    return apiClient.put('/pallet', {...mapPallet(items), pallet_id, company_id} , { withCredentials: true })
     .then(response => {
-        this.palletData = response.data.map(p => { return { ...p, is_defective: p.is_defective ? 'Taip' : 'Ne' } });
-        this.isLoading = false;
     })
     .catch(error => {
         console.error('Error fetching pallet data:', error);
-        this.isLoading = false;
     });
+}
+
+function createPallet(items, company_id) {
+    return apiClient.post('/pallets', {...mapPallet(items), company_id} , { withCredentials: true })
+    .then(response => {
+        // EventBus.emit('add-pallet', { ...response.data, is_defective: response.data.is_defective ? 'Taip' : 'Ne' });
+    })
+    .catch(error => {
+        console.error('Error fetching pallet data:', error);
+    });
+}
+
+function mapPallet(pallet) {
+    return { 
+        name: pallet[5].value,
+        barcode: pallet[0].value,
+        quantity: pallet[7].value,
+        is_defective: pallet[3].value === 'Taip' ? true : false,
+        location: pallet[4].value,
+        status: pallet[6].value,
+        date_arrived: pallet[1].value,
+        date_exported: pallet[2].value,
+    };
 }
 
 export default {
     updatePallet,
+    createPallet
 }

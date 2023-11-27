@@ -11,7 +11,7 @@
 <script>
 import { VDataTable } from 'vuetify/lib/labs/components.mjs';
 import apiClient from '@/utils/api-client';
-import urlProvider from '@/utils/url-provider';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -30,7 +30,7 @@ export default {
         { title: 'Aprašymas', align: 'end', key: 'description' },
         { title: 'Būsena', align: 'end', key: 'status' },
         { title: 'Sukūrimo data', align: 'end', key: 'created_at' },
-        { title: 'Paskutini kartą atnaujinta', align: 'end', key: 'updated_at' },
+        { title: 'Paskutinį kartą atnaujinta', align: 'end', key: 'updated_at' },
       ],
     }
   },
@@ -40,24 +40,46 @@ export default {
   methods: {
     fetchOrders() {
       this.isLoading = true;
-      apiClient.get(`${urlProvider.getServerEndpoint()}/orders`, { withCredentials: true })
-        .then(response => {
-          this.orderData = response.data.map(o => { return { ...o, created_at: new Date(o.created_at).toLocaleString(), updated_at: new Date(o.updated_at).toLocaleString() } });
-          this.isLoading = false;
-        })
-        .catch(error => {
-          console.error('Error fetching pallet data:', error);
-          this.isLoading = false;
-        });
+      if (this.$store.getters.getIsClientMode) {
+        apiClient.get('/orders', { withCredentials: true })
+          .then(response => {
+            this.orderData = response.data.map(o => { return { ...o, created_at: new Date(o.created_at).toLocaleString(), updated_at: new Date(o.updated_at).toLocaleString() } });
+            this.isLoading = false;
+          })
+          .catch(error => {
+            console.error('Error fetching pallet data:', error);
+            this.isLoading = false;
+          });
+      } else {
+        apiClient.post('/company/orders', { companyId: this.$store.getters.getSelectedCompany?.id}, { withCredentials: true })
+          .then(response => {
+            this.orderData = response.data.map(o => { return { ...o, created_at: new Date(o.created_at).toLocaleString(), updated_at: new Date(o.updated_at).toLocaleString() } });
+            this.isLoading = false;
+          })
+          .catch(error => {
+            console.error('Error fetching pallet data:', error);
+            this.isLoading = false;
+          });
+      }
     },
+  },
+  computed: {
+    ...mapGetters([
+      'getSelectedCompany',
+    ])
   },
   watch: {
     limit: {
       handler() {
         this.$router.push({ query: { "limit": this.limit, "page": this.page } }).catch(err => { });
-        this.fetchPallets();
+        this.fetchOrders();
       },
     },
+    getSelectedCompany: {
+      handler() {
+        this.fetchOrders();
+      }
+    }
   },
   mounted() {
     if (this.orderData.length === 0) this.fetchOrders();
